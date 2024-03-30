@@ -1,6 +1,8 @@
 import os
 from dotenv import load_dotenv
-from haystack import Pipeline
+from . import constants
+from haystack import Pipeline, Document
+from haystack.document_stores.in_memory import InMemoryDocumentStore
 from haystack.components.retrievers.in_memory import InMemoryBM25Retriever
 from haystack.components.generators import OpenAIGenerator
 from haystack.components.builders.answer_builder import AnswerBuilder
@@ -29,3 +31,21 @@ def build_pipeline(document_store, prompt_template, question):
     )
 
     print(results["llm"]["replies"])
+
+def build_document_store(traces):
+    document_store = InMemoryDocumentStore()
+    for trace in traces:
+        file = open(constants.DATA_DIR + trace + '.json', 'r')
+        content = file.read()
+        document_store.write_documents([
+            Document(content=content)
+        ])
+        file.close()
+
+    return document_store
+
+def read_prompt(template_dir, template_name):
+    prompt_file = open(template_dir + template_name, 'r')
+    prompt_template = prompt_file.read()
+    prompt_file.close()
+    return prompt_template
