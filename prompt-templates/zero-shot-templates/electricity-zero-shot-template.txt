@@ -1,0 +1,7 @@
+Given the following provenance traces, answer the question.
+{% for doc in documents %}
+    Trace:
+    {{doc.content}}
+{% endfor %}
+Question: {{question}}
+Your Answer:
